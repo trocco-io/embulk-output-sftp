@@ -6,6 +6,7 @@ plugins {
     id "signing"
     id "checkstyle"
     id "org.embulk.embulk-plugins" version "0.4.2"
+    id "com.palantir.git-version" version "3.0.0"
 }
 
 repositories {
@@ -13,11 +14,18 @@ repositories {
 }
 
 group = "org.embulk"
-version = "0.3.1-SNAPSHOT"
 description = "Stores files on SFTP server."
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+version = {
+    def vd = versionDetails()
+    if (vd.commitDistance == 0 && vd.lastTag ==~ /^[0-9]+\.[0-9]+\.[0-9]+(\.[a-zA-Z0-9]+)?/) {
+        vd.lastTag
+    } else {
+        "0.0.0.${vd.gitHash}"
+    }
+}()
 
 tasks.withType(JavaCompile) {
     options.compilerArgs << "-Xlint:deprecation" << "-Xlint:unchecked"
